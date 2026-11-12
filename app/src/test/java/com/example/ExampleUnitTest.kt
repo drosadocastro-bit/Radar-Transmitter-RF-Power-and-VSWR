@@ -97,4 +97,42 @@ class ExampleUnitTest {
         // VSWR should be 1.25
         assertEquals(1.25, res.vswr, 0.01)
     }
+
+    @Test
+    fun testRfCalculatorViewModelSjuBaseline() {
+        val vm = RfCalculatorViewModel()
+        vm.loadBaseline(SiteId.SJU, ChannelId.CH_A)
+        val result = vm.calculationResult.value
+
+        assertEquals(0.76, result.peakPowerMw, 0.01)
+        assertEquals(1.21, result.vswr, 0.01)
+    }
+
+    @Test
+    fun testRfCalculatorViewModelReactivePowerUpdate() {
+        val vm = RfCalculatorViewModel()
+        vm.setIncidentCouplerDb("54.00")
+        vm.setRevCouplerDb("45.00")
+        vm.setDutyFactor(620.0)
+        vm.setPadOffset(0.0)
+
+        // Set forward power in dB
+        vm.setFwdPowerDb("3.00")
+        vm.setRevPowerReadingDbAbs("10.00")
+
+        val res = vm.calculationResult.value
+        // Forward total dBm = 54 + 3 = 57 dBm -> 501.18 Watts -> Peak = 501.18 / 620 = 0.81 MW
+        assertEquals(0.81, res.peakPowerMw, 0.01)
+        // Reverse total dBm = 45 - 10 = 35 dBm
+        // Return loss = 57 - 35 = 22 dB
+        assertEquals(22.0, res.returnLossDb, 0.1)
+        // VSWR should be approximately 1.17
+        assertEquals(1.17, res.vswr, 0.02)
+
+        // Now test setting forward power in mW reactively updates dB and peak power
+        vm.setFwdPowerMw("2.00") // 2.0 mW -> ~3.01 dBm
+        val resMw = vm.calculationResult.value
+        assertEquals("3.01", vm.fwdReadingDb.value)
+        assertEquals(0.81, resMw.peakPowerMw, 0.02)
+    }
 }
