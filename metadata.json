@@ -1,0 +1,6 @@
+{
+  "name": "RF Power & VSWR",
+  "description": "Peak Power Output and VSWR calculator and maintenance logger with toggle mode for SJU and STT radar channels.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
