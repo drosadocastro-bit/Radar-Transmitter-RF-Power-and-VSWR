@@ -8,6 +8,18 @@ Designed specifically for the radar and transmitter facilities serving:
 
 ---
 
+## 📲 Download Android APK
+
+Download the latest installable Android APK directly from the **[GitHub Releases](https://github.com/drosadocastro-bit/Radar-Transmitter-RF-Power-and-VSWR/releases/latest)** page.
+
+### Installing on an Android Device
+1. Open the **[Latest Release](https://github.com/drosadocastro-bit/Radar-Transmitter-RF-Power-and-VSWR/releases/latest)** page on your Android phone.
+2. Under **Assets**, tap the `.apk` file to download it.
+3. Tap the downloaded file and enable **Install unknown apps** if prompted, then tap **Install**.
+   - **Minimum requirement:** Android 7.0 (API 24) or higher.
+
+---
+
 ## 📡 Overview & Purpose
 
 Field technicians perform periodic maintenance and calibration on high-power directional couplers and power sensors. This app replaces manual calculation sheets and clipboards with an intuitive, field-ready mobile console that:
@@ -89,11 +101,24 @@ $$\text{VSWR} = \frac{1 + \Gamma}{1 - \Gamma}$$
 ### Build from Terminal
 ```bash
 # Build debug APK
-gradle assembleDebug
+gradle :app:assembleDebug
+
+# Build signed release APK (requires my-upload-key.jks in project root)
+STORE_PASSWORD="<your-password>" KEY_PASSWORD="<your-password>" gradle :app:assembleRelease
 
 # Run unit tests
 gradle :app:testDebugUnitTest
 ```
+
+### Publishing a Downloadable APK via GitHub Actions
+The repository includes [`.github/workflows/release-apk.yml`](.github/workflows/release-apk.yml) to automatically build and publish downloadable APKs to GitHub Releases:
+
+1. *(Recommended for signed release builds)* Add these **Repository Secrets** in GitHub (**Settings → Secrets and variables → Actions**):
+   - `KEYSTORE_BASE64`: Base64-encoded contents of `my-upload-key.jks`
+   - `STORE_PASSWORD`: Keystore password
+   - `KEY_PASSWORD`: Key password
+   *(If these secrets are not configured, the workflow automatically falls back to building a signed debug APK.)*
+2. Push a version tag (e.g., `git tag v2.0 && git push origin v2.0`), or trigger **Build & Release APK** manually from the **Actions** tab with a `release_tag` such as `v2.0`.
 
 ---
 
